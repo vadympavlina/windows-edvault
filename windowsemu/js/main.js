@@ -1,5 +1,5 @@
 // Емулятор Windows · робочий стіл, панель завдань, меню «Пуск», буфер обміну, перетягування, властивості.
-import { FS, HOME, KNOWN, DRIVE_LABEL, DRIVE_SIZE, parentPath, nameOfPath, isInside, typeName, fmtDate, fmtTime, fmtSize, fmtNum, validName, BAD_NAME_HINT, isProtected, extOf, isText, FS_EVENTS, batched } from './fs.js';
+import { FS, HOME, KNOWN, DRIVE_LABEL, DRIVE_SIZE, parentPath, nameOfPath, isInside, typeName, fmtDate, fmtTime, fmtSize, fmtNum, validName, BAD_NAME_HINT, isProtected, extOf, isText, FS_EVENTS, batched, lc } from './fs.js';
 import { nodeIcon, folderIcon, driveIcon, pcIcon, binIcon, appIcon, winLogo, ui } from './icons.js';
 import { WM, dialog, alertBox, menu, closeMenu, esc, h, $, morph } from './ui.js';
 import { Explorer, PC, BIN, wbr } from './explorer.js';
@@ -13,10 +13,9 @@ import { installRealtime, avStatus } from './defender.js';
 import { primary, reach, syncNET, WIFI } from './net.js';
 import { installLock } from './lock.js';
 
-const lc = s => s.toLocaleLowerCase('uk');
 const KEY = 'edvault-windows';
 const DESK = HOME + '\\Desktop';
-const DEFAULTS = { view: 'icons', sort: 'name', desc: false, ext: true, hidden: false, wrap: true };
+const DEFAULTS = { view: 'icons', sort: 'name', desc: false, ext: true, hidden: false, wrap: true, allFiles: false };
 
 /* ═════════ Стан і збереження ═════════ */
 let saved = null, broken = false;
@@ -26,9 +25,11 @@ const okNode = n => n && typeof n.name === 'string' && n.attrs && (n.type === 'f
 const okState = st => st && st.drives && okNode(st.drives.C) && okNode(st.drives.D) && Array.isArray(st.bin) && Number.isFinite(st.seq);
 if (saved?.fs && !okState(saved.fs)) { broken = true; saved = null; }
 const fs = new FS(saved?.fs ? saved.fs : null);
+// налаштування зі збереження: лише відомі ключі з правильним типом, решта — типові
+const cleanSettings = s => { const o = { ...DEFAULTS }; if (s && typeof s === 'object') for (const k of Object.keys(DEFAULTS)) if (typeof s[k] === typeof DEFAULTS[k]) o[k] = s[k]; return o; };
 const sys = {
-  fs, explorers: new Set(), clip: null, recent: saved?.recent || [], procs: procState(),
-  settings: { ...DEFAULTS, ...(saved?.settings || {}) },
+  fs, explorers: new Set(), clip: null, recent: Array.isArray(saved?.recent) ? saved.recent.filter(x => typeof x === 'string').slice(0, 50) : [], procs: procState(),
+  settings: cleanSettings(saved?.settings),
 };
 let saveT = 0;
 let quotaWarned = false;
@@ -56,7 +57,7 @@ sys.tip = (el, msg) => {
 };
 
 /* ═════════ Відкриття ═════════ */
-sys.open = (app, path) => {
+const openRaw = (app, path) => {
   closeStart();
   if (app === 'explorer') return new Explorer(sys, path === BIN || path === PC ? path : path && fs.isDir(path) ? fs.real(path) : PC);
   if (app === 'cmd') return new Console(sys, path || HOME);
@@ -93,6 +94,8 @@ sys.launch = async (a, p) => {
   if (a === 'file') return sys.openFile(p);
   return sys.open(a, p);
 };
+// програма, що не змогла відкритися, не валить решту системи: показуємо повідомлення
+sys.open = (app, path) => { try { return openRaw(app, path); } catch (e) { console.error(e); sys.toast?.('Не вдалося відкрити програму. Решта системи працює.'); } };
 sys.openFile = async p => {
   const n = fs.node(p); if (!n) return;
   if (n.type === 'dir') return sys.open('explorer', p);
@@ -606,6 +609,11 @@ desktop.bind();
 desktop.render();
 renderTaskbar();
 setTimeout(() => { $('#boot').classList.remove('on'); setTimeout(() => { $('#boot').hidden = true; }, 400); }, 700);
+// помилки, яких не передбачено: повідомляємо один раз, система продовжує працювати
+let lastErr = 0;
+const onErr = e => { console.error(e); if (Date.now() - lastErr > 4000) { lastErr = Date.now(); sys.toast?.('Сталася помилка. Зміни збережено, можна продовжувати.'); } };
+addEventListener('error', e => onErr(e.error || e.message));
+addEventListener('unhandledrejection', e => onErr(e.reason));
 window.WinEmu = { fs, sys, WM, desktop, open: sys.open, openStart, closeStart, lock: () => sys.lock() };
 (window.requestIdleCallback || setTimeout)(() => sys.preload().catch(() => {}));
 if (broken) setTimeout(() => sys.toast('Збережений стан комп’ютера був пошкоджений, тому його повернуто до початкового.'), 1200);

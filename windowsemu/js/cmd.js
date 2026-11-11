@@ -2,10 +2,9 @@
 // а відкриття вікон, список і закриття задач — через host (його дає інтерфейс).
 import { fwOf, evaluate, record, NET, PROGRAMS, PROFILES, PROFILE_NAME, defaults as fwDefaults, validPorts, validAddr, actionText, profilesText, protoText, portsText, addrText, newId } from './fw.js';
 import { adapters, primary, reach, resolveName, netOf, syncNET, arpNote, sameNet, prefixOf, WIFI, MAC, NETWORKS, wifiConnect, wifiDisconnect } from './net.js';
-import { FS, ERR, FsError, HOME, USER, LOGIN, DRIVE_LABEL, resolve, parsePath, parentPath, nameOfPath, joinPath, wildcard, hasWild, isInside, fmtDate, fmtTime, fmtNum, isText, validName } from './fs.js';
+import { FS, ERR, FsError, HOME, USER, LOGIN, DRIVE_LABEL, resolve, parsePath, parentPath, nameOfPath, joinPath, wildcard, hasWild, isInside, fmtDate, fmtTime, fmtNum, isText, validName, lc } from './fs.js';
 
 export const HOST = 'EDVAULT-PC';
-const lc = s => s.toLocaleLowerCase('uk');
 
 /* ── довідка ── */
 export const HELP = {

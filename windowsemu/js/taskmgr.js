@@ -19,8 +19,8 @@ export class TaskManager {
     this.live = {}; this.hist = { cpu: [], mem: [], diskC: [], diskD: [], net: [] }; this.perf = 'cpu'; this.netBump = 0;
     this.win = WM.open({ app: 'taskmgr', exe: 'Taskmgr.exe', title: 'Диспетчер завдань', icon: appIcon('taskmgr', 16), w: 980, h: 640, minW: 700, minH: 420 });
     this.win.body.innerHTML = `<div class="tm"><header class="tm-top"><label class="tm-search">${ui('search', 15)}<input placeholder="Введіть ім’я, видавця або PID для пошуку" spellcheck="false"></label></header>
-      <div class="tm-main"><nav class="tm-nav">${PAGES.map(([k, i, t]) => `<button class="tm-n" data-page="${k}" title="${t}">${ui(i, 18)}<span>${t}</span></button>`).join('')}</nav>
-      <section class="tm-body"><header class="tm-h"></header><div class="tm-c" tabindex="-1"></div></section></div></div>`;
+      <div class="tm-main"><nav class="tm-nav" aria-label="Розділи Диспетчера завдань">${PAGES.map(([k, i, t]) => `<button class="tm-n" data-page="${k}" title="${t}">${ui(i, 18)}<span>${t}</span></button>`).join('')}</nav>
+      <section class="tm-body"><header class="tm-h"></header><div class="tm-c" tabindex="0"></div></section></div></div>`;
     this.$ = s => this.win.body.querySelector(s);
     this.bind();
     for (let i = 0; i < 60; i++) this.tick(true);

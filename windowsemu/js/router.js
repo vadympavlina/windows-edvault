@@ -101,7 +101,7 @@ export function routerPage(u, ctx) {
   const page = MENU.some(m => m[0] === path.split('/')[0]) ? path.split('/')[0] : 'status';
   const sub = path.split('/')[1] || '';
   return { title: `${MENU.find(m => m[0] === page)[2]} — ${MODEL}`, secure: 'http', html: `<div class="rt">${header(R)}<div class="rt-body"><nav class="rt-menu">${MENU.map(([k, ic, t]) => `<a href="/${k}" class="${k === page ? 'on' : ''}">${ui(ic, 17)}<span>${t}</span></a>`).join('')}</nav>
-    <main class="rt-main" data-page="${page}"></main><aside class="rt-help"${ctx.sys.routerHelpOff ? ' hidden' : ''}><h4>${ui('info', 15)} ${HELP[page][0]}</h4><p>${HELP[page][1]}</p><button class="rt-link" data-help-off>Сховати довідку</button></aside></div></div>`,
+    <div class="rt-main" data-page="${page}"></div><aside class="rt-help"${ctx.sys.routerHelpOff ? ' hidden' : ''}><h4>${ui('info', 15)} ${HELP[page][0]}</h4><p>${HELP[page][1]}</p><button class="rt-link" data-help-off>Сховати довідку</button></aside></div></div>`,
     bind: (el, c) => mount(el, c, R, page, sub) };
 }
 const header = R => `<header class="rt-top"><div class="rt-brand">${ui('router', 26)}<b>Домовик</b><span>${MODEL}</span></div><span class="grow"></span><span class="rt-fw">Прошивка ${R.sys.fw.split(' ')[0]}</span><a class="rt-tb" href="/wizard">${ui('zap', 15)}Швидке налаштування</a><button class="rt-tb" data-reboot>${ui('power', 15)}Перезавантажити</button><button class="rt-tb" data-logout>${ui('logout', 15)}Вийти</button></header>`;

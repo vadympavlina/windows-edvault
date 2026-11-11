@@ -1,9 +1,8 @@
 // Емулятор Windows · Блокнот і вікно «Відкрити / Зберегти як».
-import { HOME, KNOWN, parentPath, nameOfPath, isText, validName, BAD_NAME_HINT, fmtDate, fmtTime, extOf, FS_EVENTS, batched } from './fs.js';
+import { HOME, KNOWN, parentPath, nameOfPath, isText, validName, BAD_NAME_HINT, fmtDate, fmtTime, extOf, FS_EVENTS, batched, lc } from './fs.js';
 import { appIcon, nodeIcon, folderIcon, driveIcon, ui } from './icons.js';
 import { WM, dialog, alertBox, menu, esc, h } from './ui.js';
 
-const lc = s => s.toLocaleLowerCase('uk');
 
 export class Notepad {
   constructor(sys, path, { create } = {}) {
@@ -106,7 +105,7 @@ export function fileDialog(sys, mode, start, name = '') {
   return new Promise(res => {
     const el = h(`<div class="dlg-back"><div class="dlg fdlg" role="dialog"><header class="dlg-title"><span>${mode === 'open' ? 'Відкрити' : 'Зберегти як'}</span><button class="wb close" data-x>${ui('close', 15)}</button></header>
       <div class="fd-nav"><button class="nb" data-up title="На рівень вище">${ui('up')}</button><div class="fd-path"></div></div>
-      <div class="fd-main"><nav class="fd-side">${['Desktop', 'Documents', 'Downloads', 'Pictures'].map(k => `<button data-go="${HOME}\\${k}">${folderIcon(18, k)}<span>${KNOWN[k]}</span></button>`).join('')}${fs.drives().map(d => `<button data-go="${d}:\\">${driveIcon(d, 18)}<span>Диск ${d}:</span></button>`).join('')}</nav><div class="fd-list" tabindex="0"></div></div>
+      <div class="fd-main"><nav class="fd-side" aria-label="Місця">${['Desktop', 'Documents', 'Downloads', 'Pictures'].map(k => `<button data-go="${HOME}\\${k}">${folderIcon(18, k)}<span>${KNOWN[k]}</span></button>`).join('')}${fs.drives().map(d => `<button data-go="${d}:\\">${driveIcon(d, 18)}<span>Диск ${d}:</span></button>`).join('')}</nav><div class="fd-list" tabindex="0"></div></div>
       <div class="fd-foot"><label>Ім’я файлу: <input class="fd-name" spellcheck="false" value="${esc(name === '*.txt' ? '' : name)}" placeholder="${mode === 'save' ? 'Нотатки.txt' : ''}"></label><span class="fd-type">Текстові документи (*.txt)</span>
       <button class="btn primary" data-ok>${mode === 'open' ? 'Відкрити' : 'Зберегти'}</button><button class="btn" data-x>Скасувати</button></div></div></div>`);
     document.body.appendChild(el);

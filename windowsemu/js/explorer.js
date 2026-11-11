@@ -1,9 +1,8 @@
 // Емулятор Windows · Провідник: навігація, кнопки, контекстне меню, перетягування, перейменування, Кошик.
-import { KNOWN, HOME, DRIVE_LABEL, DRIVE_SIZE, parentPath, nameOfPath, isInside, typeName, fmtDate, fmtTime, fmtSize, fmtNum, validName, BAD_NAME_HINT, isProtected, extOf, isText, wildcard, hasWild, FS_EVENTS, batched } from './fs.js';
+import { KNOWN, HOME, DRIVE_LABEL, DRIVE_SIZE, parentPath, nameOfPath, isInside, typeName, fmtDate, fmtTime, fmtSize, fmtNum, validName, BAD_NAME_HINT, isProtected, extOf, isText, wildcard, hasWild, FS_EVENTS, batched, lc } from './fs.js';
 import { nodeIcon, driveIcon, pcIcon, binIcon, folderIcon, appIcon, ui } from './icons.js';
 import { WM, dialog, alertBox, menu, esc, h } from './ui.js';
 
-const lc = s => s.toLocaleLowerCase('uk');
 // довгі назви переносяться після крапки, підкреслення чи дефіса, а не посеред слова
 export const wbr = s => esc(s).replace(/([._\-])/g, '$1<wbr>');
 export const PC = '::pc', BIN = '::bin';
@@ -47,7 +46,7 @@ export class Explorer {
         <div class="ex-addr"><div class="crumbs"></div><input class="addr-inp" spellcheck="false" hidden></div>
         <label class="ex-search">${ui('search', 15)}<input placeholder="Пошук" spellcheck="false"></label></div>
       <div class="ex-sbar" hidden></div>
-      <div class="ex-main"><nav class="ex-side"></nav><div class="ex-view" tabindex="0"></div></div>
+      <div class="ex-main"><nav class="ex-side" aria-label="Папки"></nav><div class="ex-view" tabindex="0"></div></div>
       <footer class="ex-status"></footer></div>`;
     this.$ = s => this.win.body.querySelector(s);
     this.bind();

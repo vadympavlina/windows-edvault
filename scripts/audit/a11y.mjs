@@ -19,5 +19,5 @@ const H = 'C:\\Users\\Учень';
 for (const [a, path] of [['explorer', H], ['pc'], ['bin'], ['notepad'], ['cmd', H], ['taskmgr'], ['settings'], ['ncpa'], ['browser'], ['firewallcpl'], ['security']]) { await p.evaluate(([a, pa]) => WinEmu.open(a, pa), [a, path]); await p.waitForTimeout(350); await scan('програма: ' + a); }
 const rows = [...agg.values()].sort((a, b) => ({ critical: 0, serious: 1, moderate: 2, minor: 3 }[a.impact] - { critical: 0, serious: 1, moderate: 2, minor: 3 }[b.impact]) || b.n - a.n);
 for (const r of rows) console.log(`${(r.impact || '').padEnd(9)} ${r.id.padEnd(34)} вузлів ${String(r.n).padStart(4)}  екранів ${r.where.size}  ${r.help.slice(0, 60)}\n          напр. ${r.sample} | ${r.html}`);
-console.log('помилки', errors.slice(0, 2)); if (rows.some(r => r.impact === 'critical' || r.impact === 'serious')) process.exitCode = 1;
+console.log('помилки', errors.slice(0, 2)); if (rows.some(r => r.impact === 'critical' || r.impact === 'serious' || (r.impact === 'moderate' && r.id !== 'landmark-unique'))) process.exitCode = 1;
 await b.close(); server.close();

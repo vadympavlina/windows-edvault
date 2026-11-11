@@ -33,7 +33,9 @@ export function validName(name) {
 export const BAD_NAME_HINT = 'Ім’я файлу не може містити жоден із цих символів: \\ / : * ? " < > |';
 export const extOf = name => { const i = name.lastIndexOf('.'); return i > 0 ? name.slice(i + 1).toLowerCase() : ''; };
 export const baseOf = name => { const i = name.lastIndexOf('.'); return i > 0 ? name.slice(0, i) : name; };
-const lc = s => s.toLocaleLowerCase('uk');
+// toLocaleLowerCase('uk') повільний, а імена повторюються (порівняння в кожній папці): запам'ятовуємо результат
+const lcCache = new Map();
+export const lc = s => { let r = lcCache.get(s); if (r === undefined) { r = s.toLocaleLowerCase('uk'); if (lcCache.size > 20000) lcCache.clear(); lcCache.set(s, r); } return r; };
 
 // Шаблон з * і ? (без урахування регістру)
 export function wildcard(pattern) {

@@ -1,7 +1,7 @@
 // Безпека: підставляємо <img onerror> в імена файлів, вміст, команди й адреси, відкриваємо програми й дивимось, чи виконується код. npm run audit:xss (код виходу 1 при спрацюванні)
 import { startServer, launch, newPage, signIn } from '../../tests/_harness.mjs';
 const server = await startServer(), b = await launch(), errors = [];
-const ctx = await b.newContext({ viewport: { width: 1366, height: 820 }, bypassCSP: true });
+const ctx = await b.newContext({ viewport: { width: 1366, height: 820 }, bypassCSP: false });
 const p = await newPage(ctx, errors); p.setDefaultTimeout(8000);
 await p.goto(server.url + '/'); await p.waitForFunction(() => window.WinEmu); await p.waitForSelector('#boot', { state: 'hidden' }); await signIn(p);
 const PAY = n => `<img src=x onerror="window.__x=(window.__x||0)+1;window.__w=(window.__w||[]);window.__w.push('${n}')">`;
@@ -39,8 +39,8 @@ await probe('Браузер: адреса й сторінки', async () => {
   const bad = `<img src=x onerror="window.__x=(window.__x||0)+1">`;
   for (const u of [bad, `http://${bad}/`, `${bad}.com`, `javascript:window.__x=1`, `search?q=${bad}`]) { const i = p.locator('.win.active input').first(); await i.fill(u); await i.press('Enter'); await p.waitForTimeout(200); }
 });
-await probe('Диспетчер завдань, налаштування, мережа', async () => { for (const a of ['taskmgr', 'settings', 'ncpa']) { await p.evaluate(a => WinEmu.open(a), a); await p.waitForTimeout(200); } });
-await probe('Брандмауер і Захисник', async () => { for (const a of ['firewallcpl', 'security', 'wfmsc']) { await p.evaluate(a => WinEmu.open(a), a); await p.waitForTimeout(250); } });
+await probe('Диспетчер завдань, налаштування, мережа', async () => { for (const a of ['taskmgr', 'settings', 'ncpa']) { await p.evaluate(a => { WinEmu.open(a); }, a); await p.waitForTimeout(200); } });
+await probe('Брандмауер і Захисник', async () => { for (const a of ['firewallcpl', 'security', 'wfmsc']) { await p.evaluate(a => { WinEmu.open(a); }, a); await p.waitForTimeout(250); const y = p.locator('.uac button.primary, .uac .btn.primary').first(); if (await y.count()) { await y.click().catch(() => {}); await p.waitForTimeout(300); } } });
 console.log(results.join('\n')); console.log('помилки сторінки:', errors.slice(0, 3));
 process.exitCode = results.some(r => /виконань [1-9]/.test(r)) ? 1 : 0;
 await b.close(); server.close();

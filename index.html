@@ -2,14 +2,13 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Емулятор Windows · Edvault</title>
 <meta name="description" content="Навчальний емулятор Windows: Провідник, Командний рядок, Блокнот і Кошик. Створюйте, перейменовуйте, переміщайте й видаляйте файли — кнопками або командами.">
 <link rel="icon" href="icons/windows-emulator.ico" sizes="32x32">
 <link rel="icon" href="icons/windows-emulator.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/windows-emulator-180.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="windowsemu/app.css">
 <!-- og -->
 <meta property="og:type" content="website">
@@ -57,7 +56,7 @@
   </div>
 </footer>
 
-<section id="start" hidden>
+<section id="start" aria-label="Меню Пуск" hidden>
   <div class="st-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="stQ" placeholder="Пошук застосунків, файлів і папок" spellcheck="false" autocomplete="off"></div>
   <div class="st-body" id="stBody"></div>
   <div class="st-foot"><button class="st-user" title="Учень (admin)"><span class="av">У</span>Учень</button><button class="tb-btn" id="powerBtn" title="Живлення"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg></button></div>
@@ -65,23 +64,6 @@
 
 <div id="boot" class="on"><svg width="64" height="64" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="8.5" height="8.5" fill="#4cc2ff"/><rect x="10.5" y="1" width="8.5" height="8.5" fill="#4cc2ff"/><rect x="1" y="10.5" width="8.5" height="8.5" fill="#4cc2ff"/><rect x="10.5" y="10.5" width="8.5" height="8.5" fill="#4cc2ff"/></svg><i class="spin"></i><span>Ласкаво просимо</span></div>
 <div id="toast"></div>
-<script type="module">
-  // На телефоні емулятор не запускається: екран замалий для вікон і панелі завдань — показуємо повідомлення,
-  // яке не можна закрити. Планшет і комп'ютер працюють повноцінно. Якщо на комп'ютері звузити вікно браузера,
-  // повідомлення з'являється, а після розширення — зникає, і робота продовжується.
-  const small = () => innerWidth < 600 || (matchMedia('(pointer: coarse)').matches && Math.min(innerWidth, innerHeight) < 600);
-  const block = document.getElementById('smallScreen');
-  let started = false;
-  const check = () => {
-    const s = small();
-    document.documentElement.classList.toggle('phone', s);
-    block.hidden = !s;
-    for (const el of document.body.children) if (el !== block) el.inert = s;
-    if (!s && !started) { started = true; import('./windowsemu/js/main.js'); }
-  };
-  check();
-  addEventListener('resize', check);
-  addEventListener('orientationchange', check);
-</script>
+<script type="module" src="windowsemu/js/boot.js"></script>
 </body>
 </html>

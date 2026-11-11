@@ -13,7 +13,7 @@ export class SettingsApp {
     this.win.body.innerHTML = `<div class="st-app">
       <aside class="sa-side"><div class="sa-user"><span class="av big">${USER[0]}</span><span><b>${USER}</b><small>Локальний обліковий запис</small></span></div>
         ${NAV.map(([k, ic, t]) => `<button class="sa-n" data-nav="${k}">${ui(ic, 18)}<span>${t}</span></button>`).join('')}</aside>
-      <main class="sa-main"></main></div>`;
+      <div class="sa-main"></div></div>`;
     this.win.body.addEventListener('click', e => {
       const n = e.target.closest('[data-nav]'); if (n) return this.go(n.dataset.nav);
       if (e.target.closest('[data-reset]')) this.reset();

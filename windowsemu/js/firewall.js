@@ -18,7 +18,7 @@ export class SecurityApp {
   constructor(sys, page = 'home') {
     this.sys = sys; this.fs = sys.fs; this.page = page; this.hist = [];
     this.win = WM.open({ app: 'security', exe: 'SecHealthUI.exe', title: 'Безпека Windows', icon: appIcon('security', 16), w: 980, h: 660, minW: 640, minH: 400 });
-    this.win.body.innerHTML = `<div class="sec"><nav class="sec-nav"><button class="sn back" data-back title="Назад">${ui('back', 16)}</button><button class="sn" data-menu title="Згорнути або розгорнути меню" aria-label="Меню">${ui('menu', 16)}</button>${NAV.map(([k, i, t]) => `<button class="sn" data-go="${k}">${ui(i, 18)}<span>${t}</span></button>`).join('')}<span class="grow"></span><button class="sn" data-go="settings">${ui('gear', 18)}<span>Параметри</span></button></nav><main class="sec-main"></main></div>`;
+    this.win.body.innerHTML = `<div class="sec"><nav class="sec-nav" aria-label="Навігація"><button class="sn back" data-back title="Назад">${ui('back', 16)}</button><button class="sn" data-menu title="Згорнути або розгорнути меню" aria-label="Меню">${ui('menu', 16)}</button>${NAV.map(([k, i, t]) => `<button class="sn" data-go="${k}">${ui(i, 18)}<span>${t}</span></button>`).join('')}<span class="grow"></span><button class="sn" data-go="settings">${ui('gear', 18)}<span>Параметри</span></button></nav><div class="sec-main"></div></div>`;
     this.$ = s => this.win.body.querySelector(s); this.$$ = s => [...this.win.body.querySelectorAll(s)];
     this.win.body.addEventListener('click', e => this.click(e));
     this.win.body.addEventListener('change', e => { if (e.target.name === 'avopt') this.avOpt = e.target.value; });
@@ -127,7 +127,7 @@ export class FirewallCpl {
     this.sys = sys; this.fs = sys.fs; this.page = page; this.open = { [NET.profile]: true }; this.unlocked = false; this.draft = null;
     this.win = WM.open({ app: 'firewallcpl', exe: 'explorer.exe', title: 'Брандмауер Захисника Windows', icon: appIcon('firewall', 16), w: 960, h: 680, minW: 640, minH: 400 });
     this.win.body.innerHTML = `<div class="cpl"><div class="cpl-bar"><button class="nb" data-up title="Назад">${ui('back')}</button><div class="cpl-path">${appIcon('firewall', 16)}<span>Панель керування</span>${ui('chevron', 12)}<span>Система й безпека</span>${ui('chevron', 12)}<b>Брандмауер Захисника Windows</b></div><label class="ex-search">${ui('search', 15)}<input placeholder="Пошук у Панелі керування" disabled></label></div>
-      <div class="cpl-main"><nav class="cpl-side"></nav><div class="cpl-body"></div></div></div>`;
+      <div class="cpl-main"><nav class="cpl-side" aria-label="Завдання"></nav><div class="cpl-body"></div></div></div>`;
     this.$ = s => this.win.body.querySelector(s);
     this.win.body.addEventListener('click', e => this.click(e));
     this.win.body.addEventListener('change', e => this.change(e));

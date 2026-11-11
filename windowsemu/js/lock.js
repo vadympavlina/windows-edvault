@@ -19,7 +19,7 @@ const ICO = {
 };
 
 export function installLock(sys) {
-  const el = h(`<div id="lock" class="lk" hidden>
+  const el = h(`<div id="lock" class="lk" role="region" aria-label="Екран входу" hidden>
     <div class="lk-face"><div class="lk-clock"><b class="lk-time"></b><span class="lk-date"></span></div></div>
     <div class="lk-sign">
       <form class="lk-in" autocomplete="off" hidden>
